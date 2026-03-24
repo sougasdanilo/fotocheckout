@@ -23,7 +23,10 @@ export default function App() {
 
   function capturar() {
     if (!pedido) return alert("Informe o número do pedido");
-    const image = webcamRef.current.getScreenshot();
+    const image = webcamRef.current.getScreenshot({
+      width: 1920,
+      height: 1080
+    });
     setFoto(image);
   }
 
@@ -68,7 +71,9 @@ export default function App() {
   }
 
   const videoConstraints = {
-    facingMode: "environment"
+    facingMode: "environment",
+    width: { ideal: 1920, min: 1280 },
+    height: { ideal: 1080, min: 720 }
   };
 
   const styles = {
