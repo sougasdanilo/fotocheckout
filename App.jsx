@@ -1,10 +1,21 @@
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, useCallback } from "react";
 import Webcam from "react-webcam";
 
 const DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1469694611344593097/VNPloszJULo4pVMbGmrnqtEnQ3drKeNpF2vJfvPv-zDwSb2chBynkE5mSS-0v-HFWE7m";
 
+// Helper para converter Blob em base64
+const blobToBase64 = (blob) => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onloadend = () => resolve(reader.result);
+    reader.onerror = reject;
+    reader.readAsDataURL(blob);
+  });
+};
+
 export default function App() {
   const webcamRef = useRef(null);
+  const [imageCapture, setImageCapture] = useState(null);
 
   const [pedido, setPedido] = useState("");
   const [foto, setFoto] = useState(null);
@@ -33,10 +44,28 @@ export default function App() {
     localStorage.setItem("pedidos", JSON.stringify(lista));
   }
 
-  function capturar() {
+  async function capturar() {
     if (!pedido) return alert("Informe o número do pedido");
-    const image = webcamRef.current.getScreenshot();
-    setFoto(image);
+
+    try {
+      let imageData;
+
+      if (imageCapture) {
+        // Usa ImageCapture para resolução máxima nativa
+        const blob = await imageCapture.takePhoto();
+        imageData = await blobToBase64(blob);
+      } else {
+        // Fallback para getScreenshot se ImageCapture não disponível
+        imageData = webcamRef.current.getScreenshot();
+      }
+
+      setFoto(imageData);
+    } catch (error) {
+      console.error("Erro ao capturar:", error);
+      // Fallback em caso de erro
+      const imageData = webcamRef.current.getScreenshot();
+      setFoto(imageData);
+    }
   }
 
   async function enviarDiscord(base64, nome) {
@@ -82,6 +111,19 @@ export default function App() {
   const videoConstraints = {
     facingMode: "environment"
   };
+
+  // Callback quando o video está pronto - inicializa ImageCapture
+  const handleUserMedia = useCallback(() => {
+    if (webcamRef.current && webcamRef.current.video) {
+      const video = webcamRef.current.video;
+      if (video.srcObject) {
+        const track = video.srcObject.getVideoTracks()[0];
+        if (track && typeof ImageCapture !== "undefined") {
+          setImageCapture(new ImageCapture(track));
+        }
+      }
+    }
+  }, []);
 
   const styles = {
     container: {
@@ -269,6 +311,7 @@ export default function App() {
               ref={webcamRef}
               screenshotFormat="image/jpeg"
               videoConstraints={videoConstraints}
+              onUserMedia={handleUserMedia}
               style={{ width: "100%", height: "100%", objectFit: "cover" }}
             />
           </div>
