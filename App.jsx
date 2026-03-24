@@ -179,8 +179,7 @@ export default function App() {
       borderRadius: "16px",
       boxShadow: "0 20px 40px rgba(0,0,0,0.4)",
       objectFit: "contain",
-      imageRendering: "-webkit-optimize-contrast",
-      imageRendering: "crisp-edges"
+      imageRendering: "-webkit-optimize-contrast"
     },
     buttonGroup: {
       display: "flex",
