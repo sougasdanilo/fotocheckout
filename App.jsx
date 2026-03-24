@@ -10,10 +10,22 @@ export default function App() {
   const [foto, setFoto] = useState(null);
   const [pedidos, setPedidos] = useState([]);
   const [busca, setBusca] = useState("");
+  const [isPortrait, setIsPortrait] = useState(false);
 
   useEffect(() => {
     const data = localStorage.getItem("pedidos");
     if (data) setPedidos(JSON.parse(data));
+
+    const checkOrientation = () => {
+      setIsPortrait(window.innerHeight > window.innerWidth);
+    };
+    checkOrientation();
+    window.addEventListener("resize", checkOrientation);
+    window.addEventListener("orientationchange", checkOrientation);
+    return () => {
+      window.removeEventListener("resize", checkOrientation);
+      window.removeEventListener("orientationchange", checkOrientation);
+    };
   }, []);
 
   function salvarLocal(lista) {
@@ -23,9 +35,11 @@ export default function App() {
 
   function capturar() {
     if (!pedido) return alert("Informe o número do pedido");
+    const captureWidth = isPortrait ? 1080 : 1920;
+    const captureHeight = isPortrait ? 1920 : 1080;
     const image = webcamRef.current.getScreenshot({
-      width: 1920,
-      height: 1080
+      width: captureWidth,
+      height: captureHeight
     });
     setFoto(image);
   }
@@ -72,8 +86,9 @@ export default function App() {
 
   const videoConstraints = {
     facingMode: "environment",
-    width: { ideal: 1920, min: 1280 },
-    height: { ideal: 1080, min: 720 }
+    width: { ideal: isPortrait ? 1080 : 1920 },
+    height: { ideal: isPortrait ? 1920 : 1080 },
+    aspectRatio: isPortrait ? 9/16 : 16/9
   };
 
   const styles = {
@@ -124,7 +139,9 @@ export default function App() {
       position: "relative",
       borderRadius: "16px",
       overflow: "hidden",
-      boxShadow: "0 20px 40px rgba(0,0,0,0.4)"
+      boxShadow: "0 20px 40px rgba(0,0,0,0.4)",
+      aspectRatio: isPortrait ? "9/16" : "16/9",
+      maxHeight: "70vh"
     },
     buttonPrimary: {
       width: "100%",
@@ -164,7 +181,9 @@ export default function App() {
     preview: {
       width: "100%",
       borderRadius: "16px",
-      boxShadow: "0 20px 40px rgba(0,0,0,0.4)"
+      boxShadow: "0 20px 40px rgba(0,0,0,0.4)",
+      aspectRatio: isPortrait ? "9/16" : "16/9",
+      objectFit: "cover"
     },
     buttonGroup: {
       display: "flex",
