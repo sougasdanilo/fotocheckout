@@ -7,13 +7,9 @@ import RegistrosPage from "./pages/RegistrosPage";
 const PAGE_CONTENT = {
   "/captura": {
     title: "Captura de Pedidos",
-    subtitle:
-      "Registre fotos em alta qualidade, escolha a camera mais adequada e envie tudo direto para o webhook.",
   },
   "/registros": {
     title: "Registros Salvos",
-    subtitle:
-      "Visualize o historico local, pesquise por pedido e confira as fotos ja registradas.",
   },
 };
 

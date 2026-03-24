@@ -252,28 +252,12 @@ export default function CapturaPage({ onRegistrarPedido, onAbrirRegistros }) {
         <div className="section-head">
           <span className="section-kicker">Nova captura</span>
           <h2 className="section-title">Preparar a foto do pedido</h2>
-          <p className="section-copy">
-            Escolha a camera, capture em qualidade maxima e envie o arquivo original do blob
-            gerado.
-          </p>
         </div>
 
         {status ? <div className={`status status--${status.tone}`}>{status.message}</div> : null}
         {cameraError ? <div className="status status--error">{cameraError}</div> : null}
 
-        <div className="field-group">
-          <label className="field-label" htmlFor="pedido">
-            Numero do pedido
-          </label>
-          <input
-            id="pedido"
-            className="text-input"
-            value={pedido}
-            onChange={(event) => setPedido(event.target.value)}
-            inputMode="numeric"
-            placeholder="Ex.: 48231"
-          />
-        </div>
+        
 
         <div className="field-group">
           <label className="field-label" htmlFor="camera">
@@ -298,30 +282,45 @@ export default function CapturaPage({ onRegistrarPedido, onAbrirRegistros }) {
             )}
           </select>
 
-          <p className="helper-text">
-            Em alguns celulares vale trocar manualmente entre cameras frontal e traseira para
-            acertar foco e lente.
-          </p>
+          <div className="field-group">
+            <label className="field-label" htmlFor="pedido">
+              Numero do pedido
+            </label>
+            <input
+              id="pedido"
+              className="text-input"
+              value={pedido}
+              onChange={(event) => setPedido(event.target.value)}
+              inputMode="numeric"
+              placeholder="Ex.: 48231"
+            />
+          </div>
 
           {selectedCamera ? (
             <p className="helper-text">Camera ativa: {selectedCamera.label || "Padrao do sistema"}</p>
           ) : null}
         </div>
-
-        <div className="capture-meta">
-          <div className="meta-item">
-            <span className="meta-label">Captura</span>
-            <strong className="meta-value">
-              {capturedPhoto ? formatCaptureResolution(capturedPhoto) : "Pronta para foto"}
-            </strong>
+        <section className="card camera-card">
+          <div className={`camera-frame ${isPortrait ? "is-portrait" : "is-landscape"}`}>
+            {capturedPhoto && previewUrl ? (
+              <img className="photo-preview" src={previewUrl} alt="Preview da captura" />
+            ) : (
+              <Webcam
+                key={selectedDeviceId || "default-camera"}
+                ref={webcamRef}
+                audio={false}
+                className="camera-video"
+                playsInline
+                screenshotFormat="image/png"
+                screenshotQuality={1}
+                forceScreenshotSourceSize
+                videoConstraints={videoConstraints}
+                onUserMedia={handleUserMedia}
+                onUserMediaError={handleUserMediaError}
+              />
+            )}
           </div>
-
-          <div className="meta-item">
-            <span className="meta-label">Envio</span>
-            <strong className="meta-value">Blob original em alta qualidade</strong>
-          </div>
-        </div>
-
+        </section>
         <div className="button-row">
           {!capturedPhoto ? (
             <button
@@ -355,27 +354,7 @@ export default function CapturaPage({ onRegistrarPedido, onAbrirRegistros }) {
         </div>
       </section>
 
-      <section className="card camera-card">
-        <div className={`camera-frame ${isPortrait ? "is-portrait" : "is-landscape"}`}>
-          {capturedPhoto && previewUrl ? (
-            <img className="photo-preview" src={previewUrl} alt="Preview da captura" />
-          ) : (
-            <Webcam
-              key={selectedDeviceId || "default-camera"}
-              ref={webcamRef}
-              audio={false}
-              className="camera-video"
-              playsInline
-              screenshotFormat="image/png"
-              screenshotQuality={1}
-              forceScreenshotSourceSize
-              videoConstraints={videoConstraints}
-              onUserMedia={handleUserMedia}
-              onUserMediaError={handleUserMediaError}
-            />
-          )}
-        </div>
-      </section>
+      
     </div>
   );
 }
