@@ -80,7 +80,9 @@ export default function App() {
   }
 
   const videoConstraints = {
-    facingMode: "environment"
+    facingMode: "environment",
+    width: { ideal: 1920 },
+    height: { ideal: 1080 }
   };
 
   const styles = {
@@ -176,7 +178,9 @@ export default function App() {
       maxHeight: isPortrait ? "60vh" : "50vh",
       borderRadius: "16px",
       boxShadow: "0 20px 40px rgba(0,0,0,0.4)",
-      objectFit: "contain"
+      objectFit: "contain",
+      imageRendering: "-webkit-optimize-contrast",
+      imageRendering: "crisp-edges"
     },
     buttonGroup: {
       display: "flex",
@@ -268,6 +272,7 @@ export default function App() {
             <Webcam
               ref={webcamRef}
               screenshotFormat="image/jpeg"
+              screenshotQuality={1}
               videoConstraints={videoConstraints}
               style={{ width: "100%", height: "100%", objectFit: "cover" }}
             />
