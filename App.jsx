@@ -243,6 +243,7 @@ export default function App() {
             placeholder="📋 Digite o número do pedido"
             value={pedido}
             onChange={e => setPedido(e.target.value)}
+            inputMode="numeric"
             style={{...styles.input, marginBottom: "16px"}}
           />
 
