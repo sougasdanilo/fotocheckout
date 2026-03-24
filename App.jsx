@@ -35,12 +35,7 @@ export default function App() {
 
   function capturar() {
     if (!pedido) return alert("Informe o número do pedido");
-    const captureWidth = isPortrait ? 1080 : 1920;
-    const captureHeight = isPortrait ? 1920 : 1080;
-    const image = webcamRef.current.getScreenshot({
-      width: captureWidth,
-      height: captureHeight
-    });
+    const image = webcamRef.current.getScreenshot();
     setFoto(image);
   }
 
@@ -85,10 +80,7 @@ export default function App() {
   }
 
   const videoConstraints = {
-    facingMode: "environment",
-    width: { ideal: isPortrait ? 1080 : 1920 },
-    height: { ideal: isPortrait ? 1920 : 1080 },
-    aspectRatio: isPortrait ? 9/16 : 16/9
+    facingMode: "environment"
   };
 
   const styles = {
@@ -140,8 +132,9 @@ export default function App() {
       borderRadius: "16px",
       overflow: "hidden",
       boxShadow: "0 20px 40px rgba(0,0,0,0.4)",
-      aspectRatio: isPortrait ? "9/16" : "16/9",
-      maxHeight: "70vh"
+      width: "100%",
+      aspectRatio: isPortrait ? "3/4" : "16/9",
+      maxHeight: isPortrait ? "60vh" : "50vh"
     },
     buttonPrimary: {
       width: "100%",
@@ -180,10 +173,10 @@ export default function App() {
     },
     preview: {
       width: "100%",
+      maxHeight: isPortrait ? "60vh" : "50vh",
       borderRadius: "16px",
       boxShadow: "0 20px 40px rgba(0,0,0,0.4)",
-      aspectRatio: isPortrait ? "9/16" : "16/9",
-      objectFit: "cover"
+      objectFit: "contain"
     },
     buttonGroup: {
       display: "flex",
@@ -276,7 +269,7 @@ export default function App() {
               ref={webcamRef}
               screenshotFormat="image/jpeg"
               videoConstraints={videoConstraints}
-              style={{ width: "100%", display: "block" }}
+              style={{ width: "100%", height: "100%", objectFit: "cover" }}
             />
           </div>
 
